@@ -7,22 +7,19 @@ const {
   ActivityType,
 } = require('discord.js');
 
-// 🔐 Token sécurisé (Render / .env)
+// 🔐 TOKEN sécurisé (Railway / .env)
 const TOKEN = process.env.TOKEN;
 
 // 📢 ID salon bienvenue
 const WELCOME_CHANNEL_ID = '1505691279747448893';
 
-// Anti double trigger
-const processing = new Set();
-
-// Vérif token
+// 🛑 Vérif token (IMPORTANT)
 if (!TOKEN) {
   console.error("❌ TOKEN manquant dans les variables d'environnement");
   process.exit(1);
 }
 
-// Client Discord
+// 🔧 Client Discord
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -30,7 +27,7 @@ const client = new Client({
   ],
 });
 
-// Bot prêt
+// 🚀 Bot prêt
 client.once('ready', () => {
   console.log(`✅ Connecté → ${client.user.tag}`);
 
@@ -39,14 +36,10 @@ client.once('ready', () => {
   });
 });
 
-// Event join serveur
+// 👋 Event bienvenue
 client.on('guildMemberAdd', async (member) => {
-  if (processing.has(member.id)) return;
-  processing.add(member.id);
-
-  setTimeout(() => processing.delete(member.id), 5000);
-
   const user = member.user;
+
   const avatarURL = user.displayAvatarURL({ size: 512 });
   const joinedAt = Math.floor(Date.now() / 1000);
 
@@ -64,16 +57,15 @@ client.on('guildMemberAdd', async (member) => {
       `🎉 Amuse-toi bien !`
     )
     .setThumbnail(avatarURL)
-    .setImage(avatarURL)
     .addFields(
       { name: '👤 Membre', value: `${member}`, inline: true },
       { name: '🪪 ID', value: `\`${member.id}\``, inline: true },
-      { name: '👥 Total', value: `**${member.guild.memberCount}**`, inline: true },
+      { name: '👥 Membres', value: `${member.guild.memberCount}`, inline: true },
       { name: '📅 Arrivée', value: `<t:${joinedAt}:R>`, inline: true },
       { name: '📆 Compte créé', value: `<t:${Math.floor(user.createdTimestamp / 1000)}:D>`, inline: true },
     )
     .setFooter({
-      text: `${member.guild.name}`,
+      text: member.guild.name,
       iconURL: member.guild.iconURL() ?? undefined,
     })
     .setTimestamp();
@@ -96,9 +88,9 @@ client.on('guildMemberAdd', async (member) => {
   }
 });
 
-// Logs erreurs
+// 🧠 logs erreurs
 process.on("unhandledRejection", console.error);
 process.on("uncaughtException", console.error);
 
-// Login bot
+// 🔑 Login bot
 client.login(TOKEN);
