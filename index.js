@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+console.log("TOKEN LENGTH =", process.env.TOKEN?.length);
+
 const {
   Client,
   GatewayIntentBits,
